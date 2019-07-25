@@ -17,26 +17,21 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" />
 
-	<style>
-	  #map-container {
-	    height: 450px;
-	    width: 700px;
-	  }
-	  div {
-	    display: inline-block;
-	  }
-	  #map-legend {
-      position: absolute;
-	  }
-  </style>
+	<!-- Webpage CSS -->
+	<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-	<p>* Records with no gps coordinates have been removed from this dataset</p>
-	<div id="map-container"></div>
-  <div id="map-legend"></div>
-	<div id="map-settings">
+	<header><h1>Boston Crime</h1></header>
+	<nav>
+		<div id="map-settings">
+	</nav>
+	<article>
+		<div id="map-container"></div>
+	  <div id="map-legend"></div>
+	</article>
 	</div>
+	<footer>* Records with no gps coordinates have been removed from this dataset</footer>
 
 
   <script>
@@ -61,9 +56,9 @@
 
 			//-------------------------------------------
 			// Generate Map
-			var bostonCoord  = new L.LatLng(42.32, -71.1);
+			var bostonCoord  = new L.LatLng(42.31, -71.05);
 
-			map.setView(bostonCoord, 11); // latlng, zoom level
+			map.setView(bostonCoord, 12); // latlng, zoom level
 			map.addLayer(osmTiles);
 
 			d3.json("data/boston.json", function(data) {
@@ -88,14 +83,24 @@
 			</form>
 			`;
 
-			var markers = []
+
+
+			//---------------------------------------------
+			//Plot crimes
+			var markers = [] // Needed to erase markers from previous selection
+
 			window.updateForm = function() {
 				var option_time = document.getElementById('time_slider').value;
+
+				// Delete previous markers
 				document.getElementById('time_output').value = option_time;
 				markers.forEach(function(d) {
 					d.remove();
 				});
-				markers = []
+
+				markers = [] // Clear markers list
+
+				// Add markers for each row satisfying the if statement
 				data.forEach(function(d) {
 					if (d.HOUR == option_time) {
 						var layer = L.circle([+d.Lat,+d.Long], {opacity:0});
@@ -104,35 +109,13 @@
 					}
 				})
 			}
-			updateForm();
+			//Plot crimes
+			//---------------------------------------------
 
 
+			updateForm(); // Show markers for initial selection
 
-				// data.forEach(function(d,i) {
-				// 	if (i%1000 == 0) {
-				// 		L.circle([+d.Lat,+d.Long], {opacity:0}).addTo(map);
-				// 	}
-				// });
-      }
-    );
-
-		// function query(descriminator) {
-		// 	console.log('query');
-		//   data.forEach(function(d){
-		// 		console.log('forEach');
-		// 		if (descriminator(d)) {
-		// 			L.marker([+d.Lat,+d.Long]).addTo(map);
-		// 		}
-		// 	})
-		// }
-		//
-		//
-		//
-		// query(function(d) {
-		// 	return (d.HOUR == 10);
-		// });
-
-
+		}); // End D3 loop
   </script>
 </body>
 </html>
