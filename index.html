@@ -1,1 +1,138 @@
-<h1>Hello</h1>
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Citation
+	Chris Williams
+	For his explanation of Leaflet and Open Street Map
+	http://bl.ocks.org/williaster/95584ebda56f5345b709
+-->
+<head>
+	<meta charset="utf-8">
+  <title>Basic geo (svg)</title>
+
+	<!-- Leaflet + d3 libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" />
+
+	<style>
+	  #map-container {
+	    height: 450px;
+	    width: 700px;
+	  }
+	  div {
+	    display: inline-block;
+	  }
+	  #map-legend {
+      position: absolute;
+	  }
+  </style>
+</head>
+
+<body>
+	<p>* Records with no gps coordinates have been removed from this dataset</p>
+	<div id="map-container"></div>
+  <div id="map-legend"></div>
+	<div id="map-settings">
+	</div>
+
+
+  <script>
+
+
+
+		var map = L.map("map-container"),
+			bwOsmURL = "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+	    osmAttrs  = "Map data © <a href='http://openstreetmap.org'>OpenStreetMap</a>";
+
+		var osmTiles = new L.TileLayer(bwOsmURL, {
+        minZoom: 8,
+        maxZoom: 16,
+        attribution: osmAttrs
+    });
+
+
+
+		// Load the crime dataset
+		var dataset = "data/crime.csv";
+		d3.csv(dataset, function(error, data) {
+
+			//-------------------------------------------
+			// Generate Map
+			var bostonCoord  = new L.LatLng(42.32, -71.1);
+
+			map.setView(bostonCoord, 11); // latlng, zoom level
+			map.addLayer(osmTiles);
+
+			d3.json("data/boston.json", function(data) {
+				var districts = data.features;
+				districts.forEach(function(d) {
+					L.geoJSON(d,{weight:0.5,fill:false,color:'black'}).addTo(map);
+				});
+			});
+			// Generate Map
+			//-------------------------------------------
+
+
+
+			//-------------------------------------------
+			// Create map interface buttons and sliders
+			document.getElementById('map-settings').innerHTML =
+			`
+			<form onchange="updateForm()">
+				<label for="time_slider">Time of Day [0,23]</label><br>
+				<input type="range" min="0" max="23" value="10" class="slider" id="time_slider">
+				<output name="x" for="time_slider" id="time_output"></output>
+			</form>
+			`;
+
+			var markers = []
+			window.updateForm = function() {
+				var option_time = document.getElementById('time_slider').value;
+				document.getElementById('time_output').value = option_time;
+				markers.forEach(function(d) {
+					d.remove();
+				});
+				markers = []
+				data.forEach(function(d) {
+					if (d.HOUR == option_time) {
+						var layer = L.circle([+d.Lat,+d.Long], {opacity:0});
+						layer.addTo(map);
+						markers.push(layer)
+					}
+				})
+			}
+			updateForm();
+
+
+
+				// data.forEach(function(d,i) {
+				// 	if (i%1000 == 0) {
+				// 		L.circle([+d.Lat,+d.Long], {opacity:0}).addTo(map);
+				// 	}
+				// });
+      }
+    );
+
+		// function query(descriminator) {
+		// 	console.log('query');
+		//   data.forEach(function(d){
+		// 		console.log('forEach');
+		// 		if (descriminator(d)) {
+		// 			L.marker([+d.Lat,+d.Long]).addTo(map);
+		// 		}
+		// 	})
+		// }
+		//
+		//
+		//
+		// query(function(d) {
+		// 	return (d.HOUR == 10);
+		// });
+
+
+  </script>
+</body>
+</html>
