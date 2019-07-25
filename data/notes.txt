@@ -1,0 +1,2 @@
+deleted all rows with no lat-long coordinates
+deleted some columns to save memory when loading into D3
