@@ -6,4 +6,4 @@ Visualization using OpenStreetMap, Leaflet, and D3 to show crime distribution th
 
 Work is now shifting towards the _real_ user interface.
 
-<img src='images/Capture.png'></img>
+![picture](images/Capture.png)
