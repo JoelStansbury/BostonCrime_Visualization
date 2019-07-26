@@ -14,28 +14,32 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" />
 
 	<!-- Webpage CSS -->
 	<link rel="stylesheet" href="styles.css">
+
+
 </head>
 
 <body>
 	<header><h1>Boston Crime</h1></header>
 	<nav>
-		<div id="map-settings">
+		<div id="map-settings"></div>
 	</nav>
 	<article>
 		<div id="map-container"></div>
 	  <div id="map-legend"></div>
 	</article>
-	</div>
 	<footer>* Records with no gps coordinates have been removed from this dataset</footer>
 
 
   <script>
-
 
 
 		var map = L.map("map-container"),
@@ -51,9 +55,7 @@
 
 
 		// Load the crime dataset
-		var dataset = "data/crime.csv";
-		d3.csv(dataset, function(error, data) {
-
+		d3.csv("data/crime.csv", function(error, data) {
 			//-------------------------------------------
 			// Generate Map
 			var bostonCoord  = new L.LatLng(42.31, -71.05);
@@ -72,28 +74,102 @@
 
 
 
+
+
 			//-------------------------------------------
 			// Create map interface buttons and sliders
 			document.getElementById('map-settings').innerHTML =
 			`
-			<form onchange="updateForm()">
-				<label for="time_slider">Time of Day [0,23]</label><br>
-				<input type="range" min="0" max="23" value="10" class="slider" id="time_slider">
-				<output name="x" for="time_slider" id="time_output"></output>
+			<form>
+				<table>
+					<tr>
+						<th>
+							<button id="categories_button" onclick="toggle('categories_button','crime_selection_menu')" type="button">+</button>
+						</th>
+						<th>
+							<select multiple=true id="crime_selection_menu" disabled='true'>
+							</select>
+						</th>
+					</tr>
+					<tr>
+						<th>
+							<button id="hour_button" onclick="toggle('hour_button','time_slider')" type="button">+</button>
+						</th>
+						<td>
+							<label for="time_slider">Time of Day [0,23]</label><br>
+							<input onchange="updateForm()" type="range" min="0" max="23" value="10" class="slider" id="time_slider" disabled='true'>
+							<output name="x" for="time_slider" id="time_output"></output>
+						</td>
+					</tr>
+				</table>
+
+				<br>
+				<button onclick="updateMap()" type="button">Update Map</button>
 			</form>
 			`;
 
+			window.toggle = function (b_id, o_id) {
+				var button = document.getElementById(b_id);
+				var select = document.getElementById(o_id);
+				if (select.disabled) {
+					select.disabled = false;
+					button.innerHTML = '-'
+				} else {
+					select.disabled = true;
+					button.innerHTML = '+'
+				}
+			};
+
+			var selector_html = '';
+			var categories = {};
+			d3.json("data/categories.json", function(error, data) {
+				data.forEach(function(d) {
+					selector_html += '<option value="'+d.name+'">'+d.name+'</option>\n'
+					var q = [];
+					d.codelist.forEach(function(code_obj) {
+						q.push(code_obj.code)
+					});
+					categories[d.name] = q;
+				});
+				document.getElementById('crime_selection_menu').innerHTML = selector_html;
+			});
 
 
-			//---------------------------------------------
-			//Plot crimes
-			var markers = [] // Needed to erase markers from previous selection
 
 			window.updateForm = function() {
 				var option_time = document.getElementById('time_slider').value;
+				document.getElementById('time_output').value = option_time;
+			}
+
+			//---------------------------------------------
+			//Plot crimes
+			function descriminator(d) {
+				var crime_selector = document.getElementById('crime_selection_menu'),
+					time_slider = document.getElementById('time_slider'),
+					result = true;
+				if (!crime_selector.disabled) {
+					var selected = $('#crime_selection_menu').val();
+					result = false;
+					selected.forEach(function(cat_name) {
+						if (categories[cat_name].includes(+d.OFFENSE_CODE)) {
+							result = true;
+						}
+					});
+				}
+				if (!time_slider.disabled) {
+					if (d.HOUR != $('#time_slider').val()) {
+						result = false;
+					}
+				}
+				return result;
+			}
+
+			var markers = [] // Needed to erase markers from previous selection
+
+			window.updateMap = function() {
+				var option_time = document.getElementById('time_slider').value;
 
 				// Delete previous markers
-				document.getElementById('time_output').value = option_time;
 				markers.forEach(function(d) {
 					d.remove();
 				});
@@ -102,8 +178,8 @@
 
 				// Add markers for each row satisfying the if statement
 				data.forEach(function(d) {
-					if (d.HOUR == option_time) {
-						var layer = L.circle([+d.Lat,+d.Long], {opacity:0});
+					if (descriminator(d)) {
+						var layer = L.circle([+d.Lat,+d.Long], {opacity:0, fillOpacity:1});
 						layer.addTo(map);
 						markers.push(layer)
 					}
@@ -112,8 +188,8 @@
 			//Plot crimes
 			//---------------------------------------------
 
-
-			updateForm(); // Show markers for initial selection
+			toggle('hour_button','time_slider');
+			updateMap(); // Show markers for initial selection
 
 		}); // End D3 loop
   </script>
