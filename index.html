@@ -80,15 +80,18 @@
 			// Create map interface buttons and sliders
 			document.getElementById('map-settings').innerHTML =
 			`
+			<h3>Filters</h3>
 			<form>
-				<table>
+				<table border="1">
 					<tr>
 						<th>
 							<button id="categories_button" onclick="toggle('categories_button','crime_selection_menu')" type="button">+</button>
 						</th>
 						<th>
-							<select multiple=true id="crime_selection_menu" disabled='true'>
+							<label style="font-weight: normal" >Crime Categories</label><br>
+							<select multiple=true id="crime_selection_menu" disabled='true' style="visibility: collapse">
 							</select>
+							<p style="font-size: 12px; font-weight: normal">*Hold ctrl or shift to select multiple</p>
 						</th>
 					</tr>
 					<tr>
@@ -105,6 +108,8 @@
 
 				<br>
 				<button onclick="updateMap()" type="button">Update Map</button>
+				<p style="font-size: 12px; font-weight: normal">*Takes a long time with no active filters</p>
+
 			</form>
 			`;
 
@@ -113,9 +118,11 @@
 				var select = document.getElementById(o_id);
 				if (select.disabled) {
 					select.disabled = false;
+					select.style.visibility = "initial";
 					button.innerHTML = '-'
 				} else {
 					select.disabled = true;
+					select.style.visibility = "collapse";
 					button.innerHTML = '+'
 				}
 			};
@@ -189,6 +196,7 @@
 			//---------------------------------------------
 
 			toggle('hour_button','time_slider');
+			updateForm();
 			updateMap(); // Show markers for initial selection
 
 		}); // End D3 loop
