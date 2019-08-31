@@ -17,6 +17,7 @@ If you want to view only Traffic Violations you would...
 * Prostitution
 * Alcohol
 * Riot/Party/Strike
+* Assault @ 2am
 
 You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. This may cause issues however as the searching algorithm is not great (made by me) and can cause the browser to timeout. If this were running on a normal server all of the searching would be done in SQL or SQLite which would speed this up a great deal.
 
