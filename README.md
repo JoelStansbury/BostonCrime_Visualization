@@ -19,7 +19,7 @@ If you want to view only Traffic Violations you would...
 * Riot/Party/Strike
 * Assault @ 2am
 
-You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. This may cause issues however as the searching algorithm is O(n*num_categories) and can cause the browser to timeout. If this were running on a normal server all of the searching would be done in SQL or SQLite which would speed this up a great deal.
+You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. This may cause issues however as the searching algorithm worst-case running time is O(n*num_categories) and can cause the browser to timeout. If this were running on a normal server all of the searching would be done in SQL or SQLite which would speed this up a great deal.
 
 ### Disclaimer
 These categories were made by me in order to simplify the searching process. There may be mistakes, and some groupings admitedly don't make much sense Riot/Party/Strike for example, the reason for this particular grouping was that these are _groups_ of offenders as opposed to a single offender. The point is, don't take them too seriously, the alternative is selecting individual crime_codes from a list of 576, though I'll be adding this functionality as well.
