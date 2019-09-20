@@ -19,7 +19,7 @@ If you want to view only Traffic Violations you would...
 * Riot/Party/Strike
 * Assault @ 2am
 
-You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. ~~This may cause the browser to timeout~~ Fix discussed below
+You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. ~~This may cause the browser to timeout~~ **Fix discussed below**
 
 
 ## RECENT CHANGES
@@ -33,8 +33,8 @@ using a list --> O(n*m).
 #   shown in the webpage (Assault, Murder,...)
 
 for crime in crimes:           # ~282,000 crimes in total
-  for cat in crime_categories:     # for each category selected
-    if crime.code in cat.codes:    # check if this crime is in the list of codes for that category O(m)
+  for cat in crime_categories:   # for each category selected
+    if crime.code in cat.codes:  # check if this crime is in the list of codes for that category O(m)
       add_to_map(crime)
 ```
 With a hashmap this is reduced to O(n+m)
