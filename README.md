@@ -22,10 +22,10 @@ If you want to view only Traffic Violations you would...
 You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. This may cause issues however as the searching algorithm's running time scales linearly with the number of crime codes (max 576) to check, and can cause the browser to timeout. worst case: O(n*576) (where n=282000 crimes).
 
 
-## TODO
-Optimize search function with a hashmap. 
+## RECENT CHANGES
+Optimized search function with a hashmap. 
 
-Currently using a list --> O(n*m).
+using a list --> O(n*m).
 ```
 # SUDO CODE FOR SEARCHING ALGORITHM
 # The total number of crime codes is 576
@@ -37,7 +37,7 @@ for crime in crimes:           # ~282,000 crimes in total
     if crime.code in cat.codes:    # check if this crime is in the list of codes for that category O(m)
       add_to_map(crime)
 ```
-With a hashmap this should be reduced to O(n+m)
+With a hashmap this is reduced to O(n+m)
 ```
 # SUDO CODE FOR SEARCHING ALGORITHM (HASHMAP)
 
