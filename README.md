@@ -19,12 +19,41 @@ If you want to view only Traffic Violations you would...
 * Riot/Party/Strike
 * Assault @ 2am
 
-You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. This may cause issues however as the searching algorithm's worst-case running time is O(n*num_categories) (where n=282000 crimes) and can cause the browser to timeout.
+You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. This may cause issues however as the searching algorithm's running time scales linearly with the number of crime codes (max 576) to check, and can cause the browser to timeout. worst case: O(n*576) (where n=282000 crimes).
 
-### Disclaimer
-These categories were made by me in order to simplify the searching process. There may be mistakes, and some groupings admitedly don't make much sense Riot/Party/Strike for example, the reason for this particular grouping was that these are _groups_ of offenders as opposed to a single offender. The point is, don't take them too seriously, the alternative is selecting individual crime_codes from a list of 576, though I'll be adding this functionality as well.
 
 ## TODO
-Still working on the user interface.
+Optimize search function with a hashmap. 
+
+Currently using a list --> O(n*m).
+```
+# SUDO CODE FOR SEARCHING ALGORITHM
+# The total number of crime codes is 576
+#   These are distributed across all of the categories 
+#   shown in the webpage (Assault, Murder,...)
+
+for crime in crimes:           # ~282,000 crimes in total
+  for cat in crime_categories:     # for each category selected
+    if crime.code in cat.codes:    # check if this crime is in the list of codes for that category O(m)
+      add_to_map(crime)
+```
+With a hashmap this should be reduced to O(n+m)
+```
+# SUDO CODE FOR SEARCHING ALGORITHM (HASHMAP)
+
+d = {}
+for c in crime_categories:     # for each category selected
+  codes = c.codes
+  for code in codes:
+    d[code]=0
+
+for crime in crimes:           # ~282,000 crimes in total
+    if crime.code in d.keys():    # check if this crime is in the dict O(1)
+      add_to_map(crime)
+```
+
+
+### Disclaimer
+These categories were made by me in order to simplify the searching process. There may be mistakes, and some groupings admitedly don't make much sense Riot/Party/Strike for example, the reason for this particular grouping was that these are _groups_ of offenders as opposed to a single offender. The point is, don't take them too seriously, the alternative is selecting individual crime_codes from a list of 576.
 
 
