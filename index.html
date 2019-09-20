@@ -150,18 +150,11 @@
 
 			//---------------------------------------------
 			//Plot crimes
-			function descriminator(d) {
-				var crime_selector = document.getElementById('crime_selection_menu'),
-					time_slider = document.getElementById('time_slider'),
+			function descriminator(d, codes_hashmap) {
+				var time_slider = document.getElementById('time_slider'),
 					result = true;
-				if (!crime_selector.disabled) {
-					var selected = $('#crime_selection_menu').val();
-					result = false;
-					selected.forEach(function(cat_name) {
-						if (categories[cat_name].includes(+d.OFFENSE_CODE)) {
-							result = true;
-						}
-					});
+				if (!(codes_hashmap==undefined)) {
+					result = codes_hashmap.has(+d.OFFENSE_CODE);
 				}
 				if (!time_slider.disabled) {
 					if (d.HOUR != $('#time_slider').val()) {
@@ -169,6 +162,20 @@
 					}
 				}
 				return result;
+			}
+			function make_code_hashmap(){
+				var crime_selector = document.getElementById('crime_selection_menu'),
+					codes_hashmap;
+				if (!crime_selector.disabled) {
+					codes_hashmap = new Map();
+					var selected = $('#crime_selection_menu').val();
+					selected.forEach(function(cat_name) {
+						categories[cat_name].forEach(function(code) {
+							codes_hashmap.set(code,0);
+						});
+					});
+				}
+				return codes_hashmap;
 			}
 
 			var markers = [] // Needed to erase markers from previous selection
@@ -182,10 +189,11 @@
 				});
 
 				markers = [] // Clear markers list
+				var code_hashmap = make_code_hashmap();
 
 				// Add markers for each row satisfying the if statement
 				data.forEach(function(d) {
-					if (descriminator(d)) {
+					if (descriminator(d, code_hashmap)) {
 						var layer = L.circle([+d.Lat,+d.Long], {opacity:0, fillOpacity:1});
 						layer.addTo(map);
 						markers.push(layer)
