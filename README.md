@@ -19,7 +19,7 @@ If you want to view only Traffic Violations you would...
 * Riot/Party/Strike
 * Assault @ 2am
 
-You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. This may cause issues however as the searching algorithm's running time scales linearly with the number of crime codes (max 576) to check, and can cause the browser to timeout. worst case: O(n*576) (where n=282000 crimes).
+You can also select multiple crime categories to be displayed by holding `ctrl` or `shift`. ~~This may cause the browser to timeout~~ Fix discussed below
 
 
 ## RECENT CHANGES
