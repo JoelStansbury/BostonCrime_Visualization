@@ -52,6 +52,8 @@ for crime in crimes:           # ~282,000 crimes in total
       add_to_map(crime)
 ```
 
+Further optimization may be done by converting the crime data from an array of datapoints to a hashmap, where the keys are the 576 crime codes, and the values are arrays of crime instances which have the respective codes.
+
 
 ### Disclaimer
 These categories were made by me in order to simplify the searching process. There may be mistakes, and some groupings admitedly don't make much sense Riot/Party/Strike for example, the reason for this particular grouping was that these are _groups_ of offenders as opposed to a single offender. The point is, don't take them too seriously, the alternative is selecting individual crime_codes from a list of 576.
